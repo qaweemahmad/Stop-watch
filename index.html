@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stopwatch - Dark Mode</title>
+  <style>
+    :root {
+      --bg-light: #f0f4f8;
+      --text-light: #333;
+      --box-light: #fff;
+
+      --bg-dark: #121212;
+      --text-dark: #f0f0f0;
+      --box-dark: #1e1e1e;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: var(--bg-light);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .stopwatch {
+      background: var(--box-light);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      transition: background 0.3s;
+    }
+
+    .time {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-light);
+      transition: color 0.3s;
+    }
+
+    .buttons button {
+      padding: 10px 20px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .buttons button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .start {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .pause {
+      background-color: #ffc107;
+      color: white;
+    }
+
+    .reset {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .toggle-darkmode {
+      margin-top: 1rem;
+      padding: 8px 20px;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.3s;
+    }
+
+    /* Dark Mode Styles */
+    body.dark {
+      background: var(--bg-dark);
+    }
+
+    body.dark .stopwatch {
+      background: var(--box-dark);
+    }
+
+    body.dark .time {
+      color: var(--text-dark);
+    }
+
+    @media(max-width: 500px) {
+      .time {
+        font-size: 2rem;
+      }
+      .buttons button {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stopwatch">
+    <div class="time" id="display">00:00:000</div>
+    <div class="buttons">
+      <button id="start" class="start">Start</button>
+      <button id="pause" class="pause">Pause</button>
+      <button id="reset" class="reset">Reset</button>
+    </div>
+  </div>
+
+  <button class="toggle-darkmode" onclick="toggleDarkMode()"> Toggle Dark Mode</button>
+
+  <script>
+    let startBtn = document.getElementById("start");
+    let pauseBtn = document.getElementById("pause");
+    let resetBtn = document.getElementById("reset");
+    let display = document.getElementById("display");
+
+    let startTime, interval, elapsedTime = 0;
+
+    function updateDisplay(time) {
+      let minutes = Math.floor(time / 60000);
+      let seconds = Math.floor((time % 60000) / 1000);
+      let milliseconds = time % 1000;
+
+      display.textContent =
+        String(minutes).padStart(2, '0') + ":" +
+        String(seconds).padStart(2, '0') + ":" +
+        String(milliseconds).padStart(3, '0');
+    }
+
+    function startTimer() {
+      startTime = Date.now() - elapsedTime;
+      interval = setInterval(() => {
+        elapsedTime = Date.now() - startTime;
+        updateDisplay(elapsedTime);
+      }, 10);
+      startBtn.disabled = true;
+    }
+
+    function pauseTimer() {
+      clearInterval(interval);
+      startBtn.disabled = false;
+    }
+
+    function resetTimer() {
+      clearInterval(interval);
+      elapsedTime = 0;
+      updateDisplay(elapsedTime);
+      startBtn.disabled = false;
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+    }
+
+    startBtn.addEventListener("click", startTimer);
+    pauseBtn.addEventListener("click", pauseTimer);
+    resetBtn.addEventListener("click", resetTimer);
+  </script>
+</body>
+</html>
